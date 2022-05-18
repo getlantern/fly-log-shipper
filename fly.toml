@@ -1,5 +1,8 @@
-app = "fly-log-shipper-example"
+# fly.toml file generated for fly-log-shipper-logtail on 2022-03-11T16:41:44+11:00
+
+app = "fly-log-shipper-logtail"
+
 
 [metrics]
-  port = 9598
   path = "/metrics"
+  port = 9598
