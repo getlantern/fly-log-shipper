@@ -2,6 +2,7 @@
   type = "http"
   inputs = ["log_json"]
   uri = "https://in.logtail.com"
+  method = "post"
   encoding.codec = "json"
   auth.strategy = "bearer"
   auth.token = "${LOGTAIL_TOKEN}"
