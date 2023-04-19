@@ -6,3 +6,7 @@ app = "fly-log-shipper-logtail"
 [metrics]
   path = "/metrics"
   port = 9598
+  
+[[services]]
+  http_checks = []
+  internal_port = 8686
