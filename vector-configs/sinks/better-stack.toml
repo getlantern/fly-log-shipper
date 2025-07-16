@@ -1,0 +1,14 @@
+[transforms.remap_better_stack_timestamp]
+  type = "remap"
+  inputs = ["log_json"]
+  source = '''
+    .dt = del(.timestamp)
+  '''
+
+[sinks.better_stack]
+  type = "http"
+  inputs = ["remap_better_stack_timestamp"]
+  uri = "https://${BETTER_STACK_INGESTING_HOST:-in.logs.betterstack.com}"
+  encoding.codec = "json"
+  auth.strategy = "bearer"
+  auth.token = "${BETTER_STACK_SOURCE_TOKEN:-$LOGTAIL_TOKEN}"
