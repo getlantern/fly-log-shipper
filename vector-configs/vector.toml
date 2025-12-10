@@ -23,24 +23,27 @@
 
   # If the message is a string and looks like JSON, try to parse it.
   # This is useful for apps that log in JSON format (like replica-rust).
-  if exists(.message) && is_string(.message) && starts_with(.message, "{") {
-    parsed, err = parse_json(.message)
-    if err == null {
-      # Merge the parsed fields into the root.
-      . = merge(., parsed)
+  if exists(.message) && is_string(.message) {
+    msg = string!(.message)
+    if starts_with(msg, "{") {
+      parsed, err = parse_json(msg)
+      if err == null {
+        # Store structured data in a dedicated field to avoid overwriting Fly metadata
+        .app_data = parsed
 
-      # Map tracing-subscriber 'level' to OTel 'severity_text'
-      if exists(.level) {
-        .severity_text = .level
-      }
+        # Map tracing-subscriber 'level' to OTel 'severity_text'
+        if exists(parsed.level) {
+          .severity_text = parsed.level
+        }
 
-      # Try to set a clean message field.
-      # tracing-subscriber usually puts the message in fields.message.
-      if exists(.fields.message) {
-        .message = .fields.message
-      } else if exists(.fields.line) {
-        # replica-rust specifically uses 'line' in some places.
-        .message = .fields.line
+        # Try to set a clean message field.
+        # tracing-subscriber usually puts the message in fields.message.
+        if exists(parsed.fields.message) {
+          .message = parsed.fields.message
+        } else if exists(parsed.fields.line) {
+          # replica-rust specifically uses 'line' in some places.
+          .message = parsed.fields.line
+        }
       }
     }
   }
